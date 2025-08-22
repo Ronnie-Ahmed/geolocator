@@ -15,7 +15,7 @@ struct GeoRequest {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let api_key = "AIzaSyCi7pFDU9lgBfBri13kp1MmyW9eWdeaFRk";
+    let api_key = "";
 
     let output = Command::new("nmcli")
         .args(&["-t", "-f", "SSID,BSSID,SIGNAL", "dev", "wifi"])
