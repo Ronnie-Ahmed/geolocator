@@ -1,6 +1,8 @@
-use serde::Serialize;
-use std::process::Command;
+use dotenv::dotenv;
 use reqwest::blocking::Client;
+use serde::Serialize;
+use std::env;
+use std::process::Command;
 
 #[derive(Serialize, Debug)]
 struct WifiAccessPoint {
@@ -15,7 +17,17 @@ struct GeoRequest {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let api_key = "";
+    dotenv().ok();
+    let geo_api = match env::var("GEO_API") {
+        Ok(val) => val,
+        Err(e) => {
+            println!("couldn't interpret GEO_API: {e}");
+            String::new()
+        }
+    };
+
+    println!("GEO api is : {}", geo_api);
+ 
 
     let output = Command::new("nmcli")
         .args(&["-t", "-f", "SSID,BSSID,SIGNAL", "dev", "wifi"])
@@ -53,7 +65,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let url = format!(
         "https://www.googleapis.com/geolocation/v1/geolocate?key={}",
-        api_key
+        geo_api
     );
     let client = Client::new();
     let resp: serde_json::Value = client.post(&url).json(&geo_request).send()?.json()?;
